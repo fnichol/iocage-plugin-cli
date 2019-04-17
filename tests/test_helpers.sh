@@ -37,10 +37,13 @@ commonOneTimeSetUp() {
 
   stdout="$SHUNIT_TMPDIR/stdout"
   stderr="$SHUNIT_TMPDIR/stderr"
+
+  CFG_PATH="$SHUNIT_TMPDIR/cfg_path"
+  export CFG_PATH
 }
 
 commonSetUp() {
-  rm -f "$stdout" "$stderr"
+  rm -rf "$stdout" "$stderr" "$CFG_PATH"
   unset status
 }
 
