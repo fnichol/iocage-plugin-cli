@@ -1,0 +1,6 @@
+freebsd_instance:
+  image: freebsd-11-2-release-amd64
+
+check_task:
+  setup_script: pkg install --yes devel/hs-ShellCheck devel/shfmt
+  check_script: make check
