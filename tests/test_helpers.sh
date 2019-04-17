@@ -32,6 +32,8 @@ grepVerStr() {
 commonOneTimeSetUp() {
   set -u
 
+  __ORIG_PATH="$PATH"
+
   # shellcheck disable=SC2034
   bin="${0%/*}/../bin/plugin"
 
@@ -39,12 +41,18 @@ commonOneTimeSetUp() {
   stderr="$SHUNIT_TMPDIR/stderr"
   expected="$SHUNIT_TMPDIR/expected"
 
+  fakebinpath="$SHUNIT_TMPDIR/fakebin"
+
   CFG_PATH="$SHUNIT_TMPDIR/cfg_path"
   export CFG_PATH
 }
 
 commonSetUp() {
-  rm -rf "$stdout" "$stderr" "$expected" "$CFG_PATH"
+  # Reset the value of `$PATH` to its original value
+  PATH="$__ORIG_PATH"
+  # Clean any prior test file/directory state
+  rm -rf "$stdout" "$stderr" "$expected" "$fakebinpath" "$CFG_PATH"
+  # Unset any prior test variable state
   unset status
 }
 

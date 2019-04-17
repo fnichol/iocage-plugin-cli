@@ -512,7 +512,8 @@ invoke_services_restart() {
   fi
 
   local services
-  services="$(get_value_from_key "$cfg_path" __plugin_services)"
+  services="$(get_value_from_key "$cfg_path" __plugin_services 2>/dev/null \
+    || echo)"
 
   if [ -z "$services" ]; then
     echo "no services to restart, done."
