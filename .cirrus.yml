@@ -4,3 +4,6 @@ freebsd_instance:
 check_task:
   setup_script: pkg install --yes devel/hs-ShellCheck devel/shfmt
   check_script: make check
+
+test_task:
+  test_script: make test
