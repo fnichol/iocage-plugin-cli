@@ -8,7 +8,7 @@ testAborts() {
 
   assertNotEquals "$status" 0
   assertTrue "grepStderr '^USAGE:$'"
-  assertTrue "grepStderr '^xxx missing argument$'"
+  assertTrue "grepStderr '^xxx missing key argument$'"
 }
 
 testHelpSubcmd() {

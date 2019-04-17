@@ -395,7 +395,7 @@ invoke_config_set() {
   if [ -z "${1:-}" ]; then
     print_usage_config_set >&2
     echo
-    echo "xxx missing argument" >&2
+    echo "xxx missing key argument" >&2
     echo
     return 1
   fi
@@ -406,8 +406,16 @@ invoke_config_set() {
       return 0
       ;;
     *)
+      if [ -z "${2:-}" ]; then
+        print_usage_config_set >&2
+        echo
+        echo "xxx missing value argument" >&2
+        echo
+        return 1
+      fi
+
       set_value_for_key "$cfg_path" "$1" "$2"
-      echo "set config; $1='$2'"
+      echo "config key set; $1='$2'"
       ;;
   esac
 }
