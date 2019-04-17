@@ -392,7 +392,7 @@ invoke_config_set() {
   local cfg_path="$1"
   shift
 
-  if [ -z "${2:-}" ]; then
+  if [ -z "${1:-}" ]; then
     print_usage_config_set >&2
     echo
     echo "xxx missing argument" >&2
@@ -572,6 +572,14 @@ invoke_template() {
 invoke_template_render() {
   local cfg_path="$1"
   shift
+
+  if [ -z "${1:-}" ]; then
+    print_usage_template_render >&2
+    echo
+    echo "xxx missing argument" >&2
+    echo
+    return 1
+  fi
 
   case "$1" in
     --help | -h | help)
