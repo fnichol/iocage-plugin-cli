@@ -6,7 +6,7 @@
 testAborts() {
   run "$bin" config set
 
-  assertNotEquals "$status" 0
+  assertNotEquals 0 "$status"
   assertTrue "grepStderr '^USAGE:$'"
   assertTrue "grepStderr '^xxx missing key argument$'"
 }
@@ -33,6 +33,54 @@ testHelpFlagShort() {
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-set)'"
   assertTrue "grepStdout '^USAGE:$'"
+}
+
+testMissingArgs() {
+  run "$bin" services set
+
+  assertNotEquals 0 "$status"
+  assertTrue "grepStderr '^USAGE:$'"
+  assertTrue "grepStderr '^xxx missing argument$'"
+}
+
+testSetNonexistantCfgPath() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  run "$bin" services set musicd
+
+  assertTrue 'set command errored' "$status"
+  assertTrue "grepStdout '^services set;'"
+  assertNull "$(cat "$stderr")"
+  assertEquals 'musicd' "$(cat "$CFG_PATH/__plugin_services")"
+}
+
+testSetSingleService() {
+  run "$bin" services set cooldb
+
+  assertTrue 'get command errored' "$status"
+  assertTrue "grepStdout '^services set;'"
+  assertNull "$(cat "$stderr")"
+  assertEquals 'cooldb' "$(cat "$CFG_PATH/__plugin_services")"
+}
+
+testSetMultipleServices() {
+  run "$bin" services set alpha beta charlie
+
+  assertTrue 'get command errored' "$status"
+  assertTrue "grepStdout '^services set;'"
+  assertNull "$(cat "$stderr")"
+  assertEquals 'alpha,beta,charlie' "$(cat "$CFG_PATH/__plugin_services")"
+}
+
+testSetOverwriteServices() {
+  # Set an initial value
+  "$bin" services set one two >/dev/null
+  run "$bin" services set webd
+
+  assertTrue 'set command errored' "$status"
+  assertTrue "grepStdout '^services set;'"
+  assertNull "$(cat "$stderr")"
+  assertEquals 'webd' "$(cat "$CFG_PATH/__plugin_services")"
 }
 
 oneTimeSetUp() {

@@ -540,7 +540,11 @@ invoke_services_set() {
     return 1
   fi
 
-  set_value_for_key "$cfg_path" __plugin_services "$(echo "$@" | tr ' ' ',')"
+  local value
+  value="$(echo "$@" | tr ' ' ',')"
+
+  set_value_for_key "$cfg_path" __plugin_services "$value"
+  echo "services set; services='$value'"
 }
 
 invoke_template() {
