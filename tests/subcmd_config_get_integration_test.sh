@@ -76,6 +76,108 @@ testGetExistingKey() {
   assertNull "$(cat "$stderr")"
 }
 
+testKeysFlagLongNonexistantCfgPath() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  run "$bin" config get --keys
+
+  assertTrue 'get command errored' "$status"
+  assertNull "$(cat "$stderr")"
+  assertNull "$(cat "$stdout")"
+}
+
+testKeysFlagShortNonexistantCfgPath() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  run "$bin" config get -k
+
+  assertTrue 'get command errored' "$status"
+  assertNull "$(cat "$stderr")"
+  assertNull "$(cat "$stdout")"
+}
+
+testKeysFlagLong() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  "$bin" config set beta true >/dev/null
+  "$bin" config set alpha true >/dev/null
+  "$bin" config set charlie true >/dev/null
+  run "$bin" config get --keys
+
+  assertTrue 'get command errored' "$status"
+  assertEquals 'alpha
+beta
+charlie' "$(sort <"$stdout")"
+  assertNull "$(cat "$stderr")"
+}
+
+testKeysFlagShort() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  "$bin" config set beta true >/dev/null
+  "$bin" config set alpha true >/dev/null
+  "$bin" config set charlie true >/dev/null
+  run "$bin" config get -k
+
+  assertTrue 'get command errored' "$status"
+  assertEquals 'alpha
+beta
+charlie' "$(sort <"$stdout")"
+  assertNull "$(cat "$stderr")"
+}
+
+testAllFlagLongNonexistantCfgPath() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  run "$bin" config get --all
+
+  assertTrue 'get command errored' "$status"
+  assertNull "$(cat "$stderr")"
+  assertNull "$(cat "$stdout")"
+}
+
+testAllFlagShortNonexistantCfgPath() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  run "$bin" config get -a
+
+  assertTrue 'get command errored' "$status"
+  assertNull "$(cat "$stderr")"
+  assertNull "$(cat "$stdout")"
+}
+
+testAllFlagLong() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  "$bin" config set beta 'oh spaces  ' >/dev/null
+  "$bin" config set alpha true >/dev/null
+  "$bin" config set charlie hm >/dev/null
+  "$bin" config set __shouldfilter out >/dev/null
+  run "$bin" config get --all
+
+  assertTrue 'get command errored' "$status"
+  assertEquals "alpha='true'
+beta='oh spaces  '
+charlie='hm'" "$(sort <"$stdout")"
+  assertNull "$(cat "$stderr")"
+}
+
+testAllFlagShort() {
+  # Ensure no cfg path exists
+  rm -rf "$CFG_PATH"
+  "$bin" config set beta 'oh spaces  ' >/dev/null
+  "$bin" config set alpha true >/dev/null
+  "$bin" config set charlie hm >/dev/null
+  "$bin" config set __shouldfilter out >/dev/null
+  run "$bin" config get -a
+
+  assertTrue 'get command errored' "$status"
+  assertEquals "alpha='true'
+beta='oh spaces  '
+charlie='hm'" "$(sort <"$stdout")"
+  assertNull "$(cat "$stderr")"
+}
+
 oneTimeSetUp() {
   commonOneTimeSetUp
 }
