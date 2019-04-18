@@ -612,7 +612,9 @@ invoke_template_render() {
 get_all_keys() {
   local cfg_path="$1"
 
-  find "$cfg_path" -type f -depth 1 ! -name '__*' -exec basename {} \;
+  if [ -d "$cfg_path" ]; then
+    find "$cfg_path" -type f -depth 1 ! -name '__*' -exec basename {} \;
+  fi
 }
 
 get_all_values() {
