@@ -8,7 +8,7 @@ testHelpSubcmd() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-get)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testHelpFlagLong() {
@@ -16,7 +16,7 @@ testHelpFlagLong() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-get)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testGetHelpFlagShort() {
@@ -24,7 +24,7 @@ testGetHelpFlagShort() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-get)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testGetNonexistantCfgPath() {

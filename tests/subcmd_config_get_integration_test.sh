@@ -7,8 +7,8 @@ testAborts() {
   run "$bin" config get
 
   assertNotEquals 0 "$status"
-  assertTrue "grepStderr '^USAGE:$'"
-  assertTrue "grepStderr '^xxx missing argument$'"
+  assertStderrContains '^USAGE:$'
+  assertStderrContains '^xxx missing argument$'
 }
 
 testHelpSubcmd() {
@@ -16,7 +16,7 @@ testHelpSubcmd() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-get)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testHelpFlagLong() {
@@ -24,7 +24,7 @@ testHelpFlagLong() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-get)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testHelpFlagShort() {
@@ -32,7 +32,7 @@ testHelpFlagShort() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-get)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testGetNonexistantCfgPath() {
@@ -41,7 +41,7 @@ testGetNonexistantCfgPath() {
   run "$bin" config get nope
 
   assertNotEquals 0 "$status"
-  assertTrue "grepStderr '^xxx config key not found;'"
+  assertStderrContains '^xxx config key not found;'
   assertNull "$(cat "$stdout")"
 }
 
@@ -51,7 +51,7 @@ testGetNoSuchKey() {
   run "$bin" config get nope
 
   assertNotEquals 0 "$status"
-  assertTrue "grepStderr '^xxx config key not found;'"
+  assertStderrContains '^xxx config key not found;'
   assertNull "$(cat "$stdout")"
 }
 

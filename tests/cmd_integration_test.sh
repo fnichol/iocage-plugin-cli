@@ -8,29 +8,29 @@ testCmdAborts() {
   run "$bin"
 
   assertNotEquals "$status" 0
-  assertTrue "grepStderr '^USAGE:$'"
-  assertTrue "grepStderr '^xxx missing argument$'"
+  assertStderrContains '^USAGE:$'
+  assertStderrContains '^xxx missing argument$'
 }
 
 testCmdVersionSubcmd() {
   run "$bin" version
 
   assertTrue 'version command errored' "$status"
-  assertTrue "grepStdout $(grepVerStr)"
+  assertStdoutContains "$(grepVerStr)"
 }
 
 testCmdVersionFlagLong() {
   run "$bin" --version
 
   assertTrue 'version command errored' "$status"
-  assertTrue "grepStdout $(grepVerStr)"
+  assertStdoutContains "$(grepVerStr)"
 }
 
 testCmdVersionFlagShort() {
   run "$bin" -v
 
   assertTrue 'version command errored' "$status"
-  assertTrue "grepStdout $(grepVerStr)"
+  assertStdoutContains "$(grepVerStr)"
 }
 
 testCmdHelpSubcmd() {
@@ -38,7 +38,7 @@ testCmdHelpSubcmd() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testCmdHelpFlagLong() {
@@ -46,7 +46,7 @@ testCmdHelpFlagLong() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testCmdHelpFlagShort() {
@@ -54,7 +54,7 @@ testCmdHelpFlagShort() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 oneTimeSetUp() {

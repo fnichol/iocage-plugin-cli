@@ -7,8 +7,8 @@ testAborts() {
   run "$bin" config
 
   assertNotEquals "$status" 0
-  assertTrue "grepStderr '^USAGE:$'"
-  assertTrue "grepStderr '^xxx missing argument$'"
+  assertStderrContains '^USAGE:$'
+  assertStderrContains '^xxx missing argument$'
 }
 
 testHelpSubcmd() {
@@ -16,7 +16,7 @@ testHelpSubcmd() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testHelpFlagLong() {
@@ -24,7 +24,7 @@ testHelpFlagLong() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 testHelpFlagShort() {
@@ -32,7 +32,7 @@ testHelpFlagShort() {
 
   assertTrue 'help command errored' "$status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config)'"
-  assertTrue "grepStdout '^USAGE:$'"
+  assertStdoutContains '^USAGE:$'
 }
 
 oneTimeSetUp() {

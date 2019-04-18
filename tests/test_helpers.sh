@@ -13,12 +13,12 @@ run() {
   return "$status"
 }
 
-grepStdout() {
-  grep -E "$1" <"$stdout"
+assertStdoutContains() {
+  assertTrue "grep -E '$1' <'$stdout'"
 }
 
-grepStderr() {
-  grep -E "$1" <"$stderr"
+assertStderrContains() {
+  assertTrue "grep -E '$1' <'$stderr'"
 }
 
 grepVerStr() {
