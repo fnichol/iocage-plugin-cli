@@ -12,16 +12,17 @@ check: shellcheck shfmt
 
 .PHONY: shellcheck
 shellcheck: ## Checks that the shell scripts follow established lints
-	# In order to leave relative paths for shellcheck to follow external sources,
-	# we will set the `$PWD` for each shellcheck call to be relative to the
-	# source file. However, now the directory information is lost on error, so we
-	# will compute and use an absolute path to the source file when invoking
-	# shellcheck--I would love a better alternative here...
-	for rel_src in $(SH_SOURCES); do \
-		(abs_src=`stat -f%R $$rel_src` \
-			&& cd `dirname $$rel_src` \
-			&& shellcheck --external-sources $$abs_src); \
-	done
+	shellcheck --external-sources $(SH_SOURCES)
+	# # In order to leave relative paths for shellcheck to follow external sources,
+	# # we will set the `$PWD` for each shellcheck call to be relative to the
+	# # source file. However, now the directory information is lost on error, so we
+	# # will compute and use an absolute path to the source file when invoking
+	# # shellcheck--I would love a better alternative here...
+	# for rel_src in $(SH_SOURCES); do \
+	# 	(abs_src=`stat -f%R $$rel_src` \
+	# 		&& cd `dirname $$rel_src` \
+	# 		&& shellcheck --external-sources $$abs_src); \
+	# done
 
 .PHONY: shfmt
 shfmt: ## Checks that the shell scripts are consistently formatted

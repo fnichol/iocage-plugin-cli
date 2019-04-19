@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# shellcheck source=test_helpers.sh
+# shellcheck source=tests/test_helpers.sh
 . "${0%/*}/test_helpers.sh"
 
 testAborts() {

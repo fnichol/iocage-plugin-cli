@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # shellcheck disable=SC2119
 
-# shellcheck source=test_helpers.sh
+# shellcheck source=tests/test_helpers.sh
 . "${0%/*}/test_helpers.sh"
 
 testCmdAborts() {
