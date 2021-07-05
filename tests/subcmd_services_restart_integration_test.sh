@@ -6,7 +6,7 @@
 testHelpSubcmd() {
   run "$bin" services restart help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-restart)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -14,7 +14,7 @@ testHelpSubcmd() {
 testHelpFlagLong() {
   run "$bin" services restart --help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-restart)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -22,7 +22,7 @@ testHelpFlagLong() {
 testHelpFlagShort() {
   run "$bin" services restart -h
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-restart)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -32,7 +32,7 @@ testNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" services restart
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals 'no services to restart, done.' "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -43,7 +43,7 @@ testSingleService() {
   "$bin" services set myapp >/dev/null
   run "$bin" services restart
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals "$(cat "$expected")" "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -57,7 +57,7 @@ service called; args=trois restart
   "$bin" services set un deux trois >/dev/null
   run "$bin" services restart
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals "$(cat "$expected")" "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -67,7 +67,7 @@ testFailingSingleService() {
   "$bin" services set bomb >/dev/null
   run "$bin" services restart
 
-  assertNotEquals 0 "$status"
+  assertNotEquals 0 "$return_status"
   assertEquals 'someone set us up the bomb.' "$(cat "$stderr")"
   assertNull "$(cat "$stdout")"
 }
@@ -80,7 +80,7 @@ service called; args=deux restart
   "$bin" services set un deux bomb trois >/dev/null
   run "$bin" services restart
 
-  assertNotEquals 0 "$status"
+  assertNotEquals 0 "$return_status"
   assertEquals 'someone set us up the bomb.' "$(cat "$stderr")"
   assertEquals "$(cat "$expected")" "$(cat "$stdout")"
 }

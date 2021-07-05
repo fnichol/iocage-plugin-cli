@@ -6,7 +6,7 @@
 testAborts() {
   run "$bin" config get
 
-  assertNotEquals 0 "$status"
+  assertNotEquals 0 "$return_status"
   assertStderrContains '^USAGE:$'
   assertStderrContains '^xxx missing argument$'
 }
@@ -14,7 +14,7 @@ testAborts() {
 testHelpSubcmd() {
   run "$bin" config get help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-get)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -22,7 +22,7 @@ testHelpSubcmd() {
 testHelpFlagLong() {
   run "$bin" config get --help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-get)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -30,7 +30,7 @@ testHelpFlagLong() {
 testHelpFlagShort() {
   run "$bin" config get -h
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-get)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -40,7 +40,7 @@ testGetNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" config get nope
 
-  assertNotEquals 0 "$status"
+  assertNotEquals 0 "$return_status"
   assertStderrContains '^xxx config key not found;'
   assertNull "$(cat "$stdout")"
 }
@@ -50,7 +50,7 @@ testGetNoSuchKey() {
   mkdir -p "$CFG_PATH"
   run "$bin" config get nope
 
-  assertNotEquals 0 "$status"
+  assertNotEquals 0 "$return_status"
   assertStderrContains '^xxx config key not found;'
   assertNull "$(cat "$stdout")"
 }
@@ -61,7 +61,7 @@ testGetExistingKeyManuallySetup() {
   echo 'bar' >"$CFG_PATH/foo"
   run "$bin" config get foo
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals "bar" "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -71,7 +71,7 @@ testGetExistingKey() {
   "$bin" config set foo bar >/dev/null
   run "$bin" config get foo
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals "bar" "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -81,7 +81,7 @@ testKeysFlagLongNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" config get --keys
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertNull "$(cat "$stderr")"
   assertNull "$(cat "$stdout")"
 }
@@ -91,7 +91,7 @@ testKeysFlagShortNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" config get -k
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertNull "$(cat "$stderr")"
   assertNull "$(cat "$stdout")"
 }
@@ -104,7 +104,7 @@ testKeysFlagLong() {
   "$bin" config set charlie true >/dev/null
   run "$bin" config get --keys
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals 'alpha
 beta
 charlie' "$(sort <"$stdout")"
@@ -119,7 +119,7 @@ testKeysFlagShort() {
   "$bin" config set charlie true >/dev/null
   run "$bin" config get -k
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals 'alpha
 beta
 charlie' "$(sort <"$stdout")"
@@ -131,7 +131,7 @@ testAllFlagLongNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" config get --all
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertNull "$(cat "$stderr")"
   assertNull "$(cat "$stdout")"
 }
@@ -141,7 +141,7 @@ testAllFlagShortNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" config get -a
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertNull "$(cat "$stderr")"
   assertNull "$(cat "$stdout")"
 }
@@ -155,7 +155,7 @@ testAllFlagLong() {
   "$bin" config set __shouldfilter out >/dev/null
   run "$bin" config get --all
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals "alpha='true'
 beta='oh spaces  '
 charlie='hm'" "$(sort <"$stdout")"
@@ -171,7 +171,7 @@ testAllFlagShort() {
   "$bin" config set __shouldfilter out >/dev/null
   run "$bin" config get -a
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals "alpha='true'
 beta='oh spaces  '
 charlie='hm'" "$(sort <"$stdout")"

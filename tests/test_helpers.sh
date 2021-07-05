@@ -2,15 +2,25 @@
 
 run() {
   # Implementation inspired by `run` in bats
-  # See: https://github.com/bats-core/bats-core/blob/8789f91/libexec/bats-core/bats-exec-test#L58-L67
+  # See: https://git.io/fjCcr
   _origFlags="$-"
-  set +eET
+  set +e
+  # functrace is not supported by all shells, eg: dash
+  if set -o | "${GREP:-grep}" -q '^functrace'; then
+    # shellcheck disable=SC2039
+    set +T
+  fi
+  # errtrace is not supported by all shells, eg: ksh
+  if set -o | "${GREP:-grep}" -q '^errtrace'; then
+    # shellcheck disable=SC2039
+    set +E
+  fi
   "$@" >"$stdout" 2>"$stderr"
-  status=$?
+  return_status=$?
   set "-$_origFlags"
   unset _origFlags
 
-  return "$status"
+  return "$return_status"
 }
 
 assertStdoutContains() {
@@ -23,9 +33,9 @@ assertStderrContains() {
 
 grepVerStr() {
   if [ -n "${1:-}" ]; then
-    echo "plugin-$1 [0-9]+\.[0-9]+\.[0-9]+$"
+    echo "plugin-$1 [0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$"
   else
-    echo "plugin [0-9]+\.[0-9]+\.[0-9]+$"
+    echo "plugin [0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$"
   fi
 }
 
@@ -35,7 +45,7 @@ commonOneTimeSetUp() {
 
   __ORIG_PATH="$PATH"
 
-  bin="${0%/*}/../bin/plugin"
+  bin="${0%/*}/../build/plugin"
 
   tmppath="$SHUNIT_TMPDIR/tmp"
 

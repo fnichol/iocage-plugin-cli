@@ -6,7 +6,7 @@
 testAborts() {
   run "$bin" config set
 
-  assertNotEquals 0 "$status"
+  assertNotEquals 0 "$return_status"
   assertStderrContains '^USAGE:$'
   assertStderrContains '^xxx missing key argument$'
 }
@@ -14,7 +14,7 @@ testAborts() {
 testHelpSubcmd() {
   run "$bin" config set help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-set)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -22,7 +22,7 @@ testHelpSubcmd() {
 testHelpFlagLong() {
   run "$bin" config set --help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-set)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -30,7 +30,7 @@ testHelpFlagLong() {
 testHelpFlagShort() {
   run "$bin" config set -h
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config-set)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -38,7 +38,7 @@ testHelpFlagShort() {
 testMissingValueArg() {
   run "$bin" config set oops
 
-  assertNotEquals 0 "$status"
+  assertNotEquals 0 "$return_status"
   assertStderrContains '^USAGE:$'
   assertStderrContains '^xxx missing value argument$'
 }
@@ -48,7 +48,7 @@ testSetNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" config set band 'bend sinister'
 
-  assertTrue 'set command errored' "$status"
+  assertTrue 'set command errored' "$return_status"
   assertStdoutContains '^config key set;'
   assertNull "$(cat "$stderr")"
   assertEquals 'bend sinister' "$(cat "$CFG_PATH/band")"
@@ -57,7 +57,7 @@ testSetNonexistantCfgPath() {
 testSetNewKey() {
   run "$bin" config set song 'teacher'
 
-  assertTrue 'set command errored' "$status"
+  assertTrue 'set command errored' "$return_status"
   assertStdoutContains '^config key set;'
   assertNull "$(cat "$stderr")"
   assertEquals 'teacher' "$(cat "$CFG_PATH/song")"
@@ -68,7 +68,7 @@ testSetOverwriteKey() {
   "$bin" config set song 'out of date' >/dev/null
   run "$bin" config set song 'fancy pants'
 
-  assertTrue 'set command errored' "$status"
+  assertTrue 'set command errored' "$return_status"
   assertStdoutContains '^config key set;'
   assertNull "$(cat "$stderr")"
   assertEquals 'fancy pants' "$(cat "$CFG_PATH/song")"

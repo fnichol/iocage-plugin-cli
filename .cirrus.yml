@@ -1,9 +1,117 @@
 freebsd_instance:
-  image: freebsd-11-2-release-amd64
+  image_family: freebsd-12-2
 
 check_task:
-  setup_script: pkg install --yes devel/hs-ShellCheck devel/shfmt
-  check_script: make check
+  name: check
+  only_if: $CIRRUS_BRANCH !=~ ".*\.tmp" && $CIRRUS_BRANCH != $CIRRUS_DEFAULT_BRANCH
+  setup_script: pkg install --yes devel/gmake devel/hs-ShellCheck devel/shfmt
+  check_script: gmake check
 
 test_task:
-  test_script: make test
+  name: test
+  alias: tests
+  only_if: $CIRRUS_BRANCH !=~ ".*\.tmp" && $CIRRUS_BRANCH != $CIRRUS_DEFAULT_BRANCH
+  setup_script: pkg install --yes devel/gmake
+  test_script: gmake test
+
+build_bin_task:
+  name: build-bin-${BIN}
+  alias: build-bins
+  only_if: $CIRRUS_TAG != '' || $CIRRUS_BRANCH == 'staging' || $CIRRUS_BRANCH ==
+    'trying'
+  env:
+    BIN: plugin
+  setup_script: pkg install --yes devel/gmake
+  build_script: |
+    if [ "${CIRRUS_TAG:-}" = "nightly" ]; then
+      export NIGHTLY_BUILD="$(date -u +%F)"
+    fi
+    gmake build
+  checksums_script: |
+    cd build
+    ../.ci/build-checksums.sh "$BIN"
+  binaries_artifacts:
+    path: "build/$BIN*"
+
+ci_finished_task:
+  name: ci-finished
+  depends_on:
+    - check
+    - tests
+    - build-bins
+  container:
+    image: alpine:3
+  clone_script: mkdir -p "$CIRRUS_WORKING_DIR"
+  success_script: /bin/true
+
+create_github_release_task:
+  name: create-github-release
+  only_if: $CIRRUS_TAG != ''
+  depends_on:
+    - build-bins
+  container:
+    image: alpine:3
+  env:
+    BIN: plugin
+    GITHUB_TOKEN: ENCRYPTED[96becec46d59cdfaa81014129b1dbfdce9292468954f93330a0cb7d0f2ef56f9f4077dd5ccd96ab1a7e52afa98c9d478]
+  install_dependencies_script: apk add curl git jo jq
+  create_github_release_script: |
+    if ! upload_url="$(
+      ./.ci/cirrus-release.sh gh_create_version_release \
+        "$CIRRUS_REPO_FULL_NAME" \
+        "$CIRRUS_TAG"
+    )"; then
+      echo "xxx Failed to create release" >&2
+      exit 1
+    fi
+    echo "$upload_url" > /tmp/upload_url
+  download_cirrus_artifacts_script: |
+    cr="$(readlink -f ./.ci/cirrus-release.sh)"
+    manifest="$(readlink -f ".ci/$BIN.manifest.txt")"
+    mkdir -p /tmp/release
+    cd /tmp/release
+    awk '{ print $2 }' "$manifest" | while read -r a; do
+      "$cr" ci_download "build-bin-$a/binaries/$a"
+      "$cr" ci_download "build-bin-$a/binaries/$a.md5"
+      "$cr" ci_download "build-bin-$a/binaries/$a.sha256"
+    done
+    cp "$manifest" .
+    ls -l "$BIN"*
+  upload_github_release_artifacts_script: |
+    url="$(cat /tmp/upload_url)"
+    ./.ci/cirrus-release.sh gh_upload_all "$url" /tmp/release
+
+publish_github_release_task:
+  name: publish-github-release
+  only_if: $CIRRUS_TAG != ''
+  depends_on:
+    - create-github-release
+  container:
+    image: alpine:3
+  env:
+    GITHUB_TOKEN: ENCRYPTED[96becec46d59cdfaa81014129b1dbfdce9292468954f93330a0cb7d0f2ef56f9f4077dd5ccd96ab1a7e52afa98c9d478]
+  install_dependencies_script: apk add curl jo jq
+  publish_release_script: |
+    ./.ci/cirrus-release.sh gh_publish_release \
+      "$CIRRUS_REPO_FULL_NAME" "$CIRRUS_TAG" CHANGELOG.md
+
+release_finished_task:
+  name: release-finished
+  only_if: $CIRRUS_TAG != ''
+  depends_on:
+    - create-github-release
+    - publish-github-release
+  container:
+    image: alpine:3
+  clone_script: mkdir -p "$CIRRUS_WORKING_DIR"
+  success_script: /bin/true
+
+trigger_nightly_release_task:
+  name: trigger-nightly-release
+  only_if: $CIRRUS_CRON == 'nightly'
+  container:
+    image: alpine:3
+  env:
+    GITHUB_TOKEN: ENCRYPTED[96becec46d59cdfaa81014129b1dbfdce9292468954f93330a0cb7d0f2ef56f9f4077dd5ccd96ab1a7e52afa98c9d478]
+  install_dependencies_script: apk add curl git jo jq
+  trigger_release_script: ./.ci/cirrus-release.sh gh_update_tag "$CIRRUS_REPO_FULL_NAME" nightly
