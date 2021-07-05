@@ -21,7 +21,7 @@ build_bin_task:
     'trying'
   env:
     BIN: plugin
-  setup_script: pkg install --yes devel/gmake
+  setup_script: pkg install --yes devel/gmake devel/git
   build_script: |
     if [ "${CIRRUS_TAG:-}" = "nightly" ]; then
       export NIGHTLY_BUILD="$(date -u +%F)"
