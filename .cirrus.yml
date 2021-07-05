@@ -71,9 +71,9 @@ create_github_release_task:
     mkdir -p /tmp/release
     cd /tmp/release
     awk '{ print $2 }' "$manifest" | while read -r a; do
-      "$cr" ci_download "build-bin-$a/binaries/$a"
-      "$cr" ci_download "build-bin-$a/binaries/$a.md5"
-      "$cr" ci_download "build-bin-$a/binaries/$a.sha256"
+      "$cr" ci_download "build-bin-$a/binaries/build/$a"
+      "$cr" ci_download "build-bin-$a/binaries/build/$a.md5"
+      "$cr" ci_download "build-bin-$a/binaries/build/$a.sha256"
     done
     cp "$manifest" .
     ls -l "$BIN"*
