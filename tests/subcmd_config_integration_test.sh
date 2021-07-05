@@ -6,7 +6,7 @@
 testAborts() {
   run "$bin" config
 
-  assertNotEquals "$status" 0
+  assertNotEquals "$return_status" 0
   assertStderrContains '^USAGE:$'
   assertStderrContains '^xxx missing argument$'
 }
@@ -14,7 +14,7 @@ testAborts() {
 testHelpSubcmd() {
   run "$bin" config help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -22,7 +22,7 @@ testHelpSubcmd() {
 testHelpFlagLong() {
   run "$bin" config --help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -30,7 +30,7 @@ testHelpFlagLong() {
 testHelpFlagShort() {
   run "$bin" config -h
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr config)'"
   assertStdoutContains '^USAGE:$'
 }

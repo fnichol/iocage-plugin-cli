@@ -6,7 +6,7 @@
 testHelpSubcmd() {
   run "$bin" services get help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-get)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -14,7 +14,7 @@ testHelpSubcmd() {
 testHelpFlagLong() {
   run "$bin" services get --help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-get)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -22,7 +22,7 @@ testHelpFlagLong() {
 testGetHelpFlagShort() {
   run "$bin" services get -h
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr services-get)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -32,7 +32,7 @@ testGetNonexistantCfgPath() {
   rm -rf "$CFG_PATH"
   run "$bin" services get
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertNull "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -43,7 +43,7 @@ testGetManuallySetup() {
   echo 'myapp' >"$CFG_PATH/__plugin_services"
   run "$bin" services get
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals 'myapp' "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -52,7 +52,7 @@ testGetSingleService() {
   "$bin" services set cooldb >/dev/null
   run "$bin" services get
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals 'cooldb' "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -62,7 +62,7 @@ testGetMultipleServices() {
   "$bin" services set alpha beta charlie delta >/dev/null
   run "$bin" services get
 
-  assertTrue 'get command errored' "$status"
+  assertTrue 'get command errored' "$return_status"
   assertEquals "$(cat "$expected")" "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }

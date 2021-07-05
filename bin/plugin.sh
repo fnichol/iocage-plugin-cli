@@ -23,6 +23,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+#
+# iocage-plugin-cli
+# -----------------
+# project: https://github.com/fnichol/iocage-plugin-cli
+# author: Fletcher Nichol <fnichol@nichol.ca>
+# version: @@version@@
+# commit-hash: @@commit_hash@@
+# commit-date: @@commit_date@@
+# artifact: https://github.com/fnichol/iocage-plugin-cli/releases/download/v@@version@@/plugin
+# source: https://github.com/fnichol/iocage-plugin-cli/tree/v@@version@@
+# archive: https://github.com/fnichol/iocage-plugin-cli/archive/v@@version@@.tar.gz
+#
+
 main() {
   set -eu
   if [ -n "${DEBUG:-}" ]; then
@@ -30,7 +43,7 @@ main() {
   fi
 
   PROGRAM="$(basename "$0")"
-  VERSION="1.0.0"
+  VERSION="@@version@@"
   AUTHOR="Fletcher Nichol <fnichol@nichol.ca>"
 
   local cfg_path="${CFG_PATH:-/var/db/iocage-plugin}"

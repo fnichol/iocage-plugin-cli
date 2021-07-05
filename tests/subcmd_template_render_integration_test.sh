@@ -6,7 +6,7 @@
 testAborts() {
   run "$bin" template render
 
-  assertNotEquals "$status" 0
+  assertNotEquals "$return_status" 0
   assertStderrContains '^USAGE:$'
   assertStderrContains '^xxx missing argument$'
 }
@@ -14,7 +14,7 @@ testAborts() {
 testHelpSubcmd() {
   run "$bin" template render help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr template-render)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -22,7 +22,7 @@ testHelpSubcmd() {
 testHelpFlagLong() {
   run "$bin" template render --help
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr template-render)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -30,7 +30,7 @@ testHelpFlagLong() {
 testHelpFlagShort() {
   run "$bin" template render -h
 
-  assertTrue 'help command errored' "$status"
+  assertTrue 'help command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 | grep -E '$(grepVerStr template-render)'"
   assertStdoutContains '^USAGE:$'
 }
@@ -41,7 +41,7 @@ testNoTemplatingWithNonexistantCfgPath() {
   printf -- 'config: file' >"$template"
   run "$bin" template render "$template"
 
-  assertTrue 'render command errored' "$status"
+  assertTrue 'render command errored' "$return_status"
   assertEquals 'config: file' "$(cat "$stdout")"
   assertNull "$(cat "$stderr")"
 }
@@ -52,7 +52,7 @@ testTemplateTokenWithNonexistantCfgPath() {
   printf -- '# @@TEMPLATE@@\nconfig: file' >"$template"
   run "$bin" template render "$template"
 
-  assertTrue 'render command errored' "$status"
+  assertTrue 'render command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 \
     | grep -E '^# Generated from /.*/template\.'"
   assertNull "$(cat "$stderr")"
@@ -71,7 +71,7 @@ amibroke: @@maybe@@
 
   run "$bin" template render "$template"
 
-  assertTrue 'render command errored' "$status"
+  assertTrue 'render command errored' "$return_status"
   assertTrue "cat $stdout | head -n 1 \
     | grep -E '^# Generated from /.*/template\.'"
   assertEquals 'root: /path/to/file
@@ -99,7 +99,7 @@ amibroke: @@maybe@@
 
   run "$bin" template render "$template" "$actual"
 
-  assertTrue 'render command errored' "$status"
+  assertTrue 'render command errored' "$return_status"
   assertTrue "cat $actual | head -n 1 \
     | grep -E '^# Generated from /.*/template\.'"
   assertEquals "$(cat "$expected")" "$(tail -n +2 "$actual")"
