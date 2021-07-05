@@ -11,7 +11,7 @@ test_task:
   name: test
   alias: tests
   only_if: $CIRRUS_BRANCH !=~ ".*\.tmp" && $CIRRUS_BRANCH != $CIRRUS_DEFAULT_BRANCH
-  setup_script: pkg install --yes devel/gmake
+  setup_script: pkg install --yes devel/gmake devel/git
   test_script: gmake test
 
 build_bin_task:
