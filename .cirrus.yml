@@ -53,7 +53,7 @@ create_github_release_task:
     image: alpine:3
   env:
     BIN: plugin
-    GITHUB_TOKEN: ENCRYPTED[96becec46d59cdfaa81014129b1dbfdce9292468954f93330a0cb7d0f2ef56f9f4077dd5ccd96ab1a7e52afa98c9d478]
+    GITHUB_TOKEN: ENCRYPTED[0bcb480eb06c4397360aa90254af965240482f6b7b4e4f10cf2a59708cd346196df3738adc17a699cbcf303b73978cfc]
   install_dependencies_script: apk add curl git jo jq
   create_github_release_script: |
     if ! upload_url="$(
@@ -89,7 +89,7 @@ publish_github_release_task:
   container:
     image: alpine:3
   env:
-    GITHUB_TOKEN: ENCRYPTED[96becec46d59cdfaa81014129b1dbfdce9292468954f93330a0cb7d0f2ef56f9f4077dd5ccd96ab1a7e52afa98c9d478]
+    GITHUB_TOKEN: ENCRYPTED[0bcb480eb06c4397360aa90254af965240482f6b7b4e4f10cf2a59708cd346196df3738adc17a699cbcf303b73978cfc]
   install_dependencies_script: apk add curl jo jq
   publish_release_script: |
     ./.ci/cirrus-release.sh gh_publish_release \
@@ -112,6 +112,6 @@ trigger_nightly_release_task:
   container:
     image: alpine:3
   env:
-    GITHUB_TOKEN: ENCRYPTED[96becec46d59cdfaa81014129b1dbfdce9292468954f93330a0cb7d0f2ef56f9f4077dd5ccd96ab1a7e52afa98c9d478]
+    GITHUB_TOKEN: ENCRYPTED[0bcb480eb06c4397360aa90254af965240482f6b7b4e4f10cf2a59708cd346196df3738adc17a699cbcf303b73978cfc]
   install_dependencies_script: apk add curl git jo jq
   trigger_release_script: ./.ci/cirrus-release.sh gh_update_tag "$CIRRUS_REPO_FULL_NAME" nightly
